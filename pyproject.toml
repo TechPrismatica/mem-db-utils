@@ -1,0 +1,20 @@
+[project]
+name = "mem-db-utils"
+version = "0.1.0"
+description = "Python package for in memory database to be used for cache, fast-access storages."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "python-dotenv>=1.1.1",
+    "redis>=6.2.0",
+]
+authors = [{ name = "Faizan Azim", email = "faizanazim11@gmail.com" }]
+
+[build-system]
+requires = ["uv_build>=0.8.0,<0.9"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = ["pre-commit>=4.2.0"]
