@@ -78,9 +78,9 @@ mem-db-utils/
 - **Type checking**: Built into package with py.typed marker
 
 ### Build and Package:
-- `python -m build` -- builds distribution packages. NEVER CANCEL: May fail due to network timeouts with uv_build backend and custom PyPI index. Consider this command unreliable in constrained network environments.
+- `python -m build` -- builds distribution packages. NEVER CANCEL: May fail due to network timeouts depending on the configured build backend and network environment (see `pyproject.toml` for the backend in use). Consider this command unreliable in constrained network environments.
 - Package metadata in `pyproject.toml`
-- Uses standard Python packaging with uv_build backend (requires network access to custom PyPI index)
+- Uses standard Python packaging; the build backend is specified in `pyproject.toml` (may require network access to a custom PyPI index depending on backend).
 - **Note**: Package installation works fine, but building from source may be problematic due to external dependencies
 
 ## Database Types and Testing
