@@ -1,4 +1,4 @@
-"""Integration tests for AsyncMemDBConnector with real database connections.
+"""Integration tests for async MemDBConnector with real database connections.
 
 These tests use the database configuration from the .env file.
 The tests will work with Redis databases only as async support is primarily for Redis.
@@ -8,7 +8,7 @@ import asyncio
 
 import pytest
 
-from mem_db_utils import AsyncMemDBConnector
+from mem_db_utils.asyncio import MemDBConnector as AsyncMemDBConnector
 from mem_db_utils.config import DBConfig, DBType
 
 

@@ -1,11 +1,11 @@
-"""Tests for AsyncMemDBConnector class."""
+"""Tests for async MemDBConnector class."""
 
 from unittest.mock import AsyncMock, patch
 from urllib.parse import urlparse
 
 import pytest
 
-from mem_db_utils import AsyncMemDBConnector
+from mem_db_utils.asyncio import MemDBConnector as AsyncMemDBConnector
 from mem_db_utils.config import DBConfig, DBType
 
 
