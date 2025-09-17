@@ -344,13 +344,7 @@ asyncio.run(test_async_connection())
 
 ### Memory Efficiency
 
-Both connectors use `__slots__` for memory efficiency:
-
-```python
-# Memory-efficient attribute storage
-class MemDBConnector:
-    __slots__ = ("uri", "db_type", "connection_type", "service")
-```
+Both connectors use `__slots__` for memory efficiency, reducing per-instance memory usage by restricting attribute storage.
 
 ## Troubleshooting
 
