@@ -1,0 +1,85 @@
+[project]
+name = "mem-db-utils"
+version = "0.1.0"
+description = "Python package for in memory database to be used for cache, fast-access storages."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "python-dotenv>=1.1.1",
+    "redis>=6.2.0",
+]
+authors = [{ name = "Faizan Azim", email = "faizanazim11@gmail.com" }]
+
+[[tool.uv.index]]
+name = "prismatica-pypi"
+url = "https://readUser:hh(iBaf71$icV63@pypi.prismatica.in/simple"
+
+[build-system]
+requires = ["uv_build>=0.8.0,<0.9"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "coverage>=7.10.2",
+    "pre-commit>=4.2.0",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "pytest-dotenv>=0.5.2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+env_files = [".env"]
+
+[tool.ruff]
+lint.select = [
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # pyflakes
+    "I", # isort
+    "C", # flake8-comprehensions
+    "B", # flake8-bugbear
+]
+lint.ignore = [
+    # "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+    "E402",
+    "B904",
+    "B905",
+    "B009",
+    "C417",
+
+]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
+
+[tool.coverage.report]
+precision = 2
+fail_under = 50
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "pragma: nocover",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
+
+[tool.coverage.run]
+omit = [
+    "*/tests/*",
+    "*/src/constants/*",
+    "*/src/db/*",
+    "app.py",
+    "main.py",
+]

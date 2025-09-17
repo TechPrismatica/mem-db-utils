@@ -1,0 +1,170 @@
+# Project Guidelines - mem-db-utils
+
+## Project Overview
+This is a Python library package (`mem-db-utils`) for in-memory database utilities, designed for cache and fast-access storage solutions. The project supports multiple in-memory database types including Redis, Memcached, Dragonfly, and Valkey.
+
+## Project Structure and Organization
+
+### Core Structure
+```
+mem-db-utils/
+├── LICENSE                 # Project license
+├── pyproject.toml         # Project configuration and dependencies
+├── README.md              # Feature documentation and usage guide
+├── uv.lock               # Dependency lock file (managed by uv)
+├── rules/
+│   └── project_guidelines.mdc  # This file - agent rules
+├── src/
+│   └── mem_db_utils/
+│       ├── __init__.py    # Main library code and entry point
+│       ├── config.py      # Environment configurations
+│       └── py.typed       # Type hints marker
+└── tests/
+    ├── conftest.py        # Test configuration
+    └── test_*.py          # Test files
+```
+
+## Configuration Management
+
+### pyproject.toml - Central Configuration Hub
+- **Project metadata**: Name, version, description, authors, Python version requirements
+- **Dependencies**: Production and development dependencies
+- **Build system**: Uses `uv_build` as the build backend
+- **Ruff configuration**: Linting rules, line length (120), target Python version (3.12)
+- **Pytest configuration**: Test discovery paths and options
+- **PyPI publishing**: Metadata for package distribution
+
+### Key Configuration Rules:
+- All project configurations MUST be centralized in `pyproject.toml`
+- Dependencies are managed through `uv` package manager
+- Development dependencies go in `[dependency-groups.dev]`
+- Production dependencies go in `[project.dependencies]`
+
+## Source Code Organization
+
+### src/mem_db_utils/ Directory
+- **Purpose**: Contains all production source code
+- **Entry Point**: `__init__.py` contains the main `MemDBConnector` class
+- **Configuration**: `config.py` handles environment variables and database configurations
+- **Type Safety**: `py.typed` indicates the package supports type hints
+
+### Code Structure Rules:
+- Main library functionality MUST be in `src/mem_db_utils/__init__.py`
+- Environment and database configurations MUST be in `src/mem_db_utils/config.py`
+- Use Pydantic for configuration management with validation
+- Support multiple database types through enum (`DBType`)
+- Follow type hints best practices (package includes `py.typed`)
+
+## Configuration Management (`config.py`)
+
+### Environment Variables:
+- `db_url`: Database connection URL
+- `db_type`: Database type (auto-detected from URL if not provided)
+- `redis_connection_type`: Redis connection type
+- `redis_master_service`: Redis Sentinel master service name
+- `db_timeout`: Connection timeout (default: 30 seconds)
+
+### Configuration Rules:
+- Use `pydantic-settings` for environment variable management
+- Implement automatic database type detection from connection URL
+- Provide sensible defaults where applicable
+- Validate configuration values using Pydantic validators
+- Do not change configuration style. Use python-dotenv to load environment variables from `.env` files and mock them in tests.
+- Project uses pytest-dotenv to load environment variables from `.env` files during testing.
+
+## Testing Guidelines
+
+### Test Structure:
+- **Location**: All tests in `tests/` directory
+- **Configuration**: `tests/conftest.py` for shared test setup
+- **Naming**: Test files follow `test_*.py` pattern
+- **Scope**: Simple, focused tests covering essential functionality
+
+### Testing Rules:
+- Tests MUST be simple and focused - no overly complex test scenarios
+- Include only necessary test cases that validate core functionality
+- Use `conftest.py` for shared fixtures and test configuration
+- Test coverage should focus on critical paths and error handling
+- Connect to databases for all tests that require database interaction
+- Databases are available at {Redis:redis://localhost:6379/0, Memcached:memcached://localhost:11211, Dragonfly:dragonfly://default:dragonfly123@localhost:6380, Valkey:valkey://localhost:6381}
+
+## Documentation Standards
+
+### README.md Requirements:
+- **Primary Purpose**: Feature documentation and usage examples
+- **Content**: Installation instructions, usage examples, API documentation
+- **Format**: Clear, concise Markdown with code examples
+- **Maintenance**: Keep synchronized with actual functionality
+
+### Documentation Rules:
+- Feature documentation MUST be in `README.md`
+- Include practical usage examples
+- Document all public APIs and configuration options
+- Provide installation and setup instructions
+- Include troubleshooting section if applicable
+
+## Package Management with uv
+
+### uv Package Manager:
+- **Primary tool**: All dependency management through `uv`
+- **Lock file**: `uv.lock` tracks exact dependency versions
+- **Installation**: `uv sync` for development setup
+- **Build**: Uses `uv_build` backend defined in `pyproject.toml`
+
+### Package Management Rules:
+- Use `uv add` for adding new dependencies
+- Use `uv add --dev` for development dependencies
+- Never manually edit `uv.lock` - let uv manage it
+- Commit `uv.lock` to version control for reproducible builds
+- Use `uv sync` to install dependencies in new environments
+
+## Code Quality Standards
+
+### Ruff Configuration:
+- **Line length**: 120 characters maximum
+- **Target Python**: 3.12+
+- **Enabled rules**: pycodestyle, pyflakes, isort, flake8-comprehensions, flake8-bugbear
+- **Per-file ignores**: `__init__.py` allows unused imports (F401)
+
+### Quality Rules:
+- Follow PEP 8 style guidelines with 120-character line limit
+- Use type hints throughout the codebase
+- Implement proper error handling and validation
+- Follow single responsibility principle for classes and functions
+- Use meaningful variable and function names
+
+## Development Workflow
+
+### Setup Process:
+1. Clone repository
+2. Run `uv sync` to install dependencies
+3. Install pre-commit hooks if using version control
+4. Configure environment variables as needed
+
+### Development Rules:
+- Install package in development mode: `uv pip install -e .`
+- Run tests with: `pytest`
+- Use `pre-commit` for code quality checks
+- Update `README.md` when adding new features
+- Follow semantic versioning for releases
+
+## Library Distribution
+
+### Installable Package:
+- **Type**: Installable Python library
+- **Distribution**: Via PyPI (configured in `pyproject.toml`)
+- **Installation**: `pip install mem-db-utils` or `uv add mem-db-utils`
+
+### Distribution Rules:
+- Package MUST be installable via pip/uv
+- Version numbers follow semantic versioning (MAJOR.MINOR.PATCH)
+- Include all necessary metadata in `pyproject.toml`
+- Ensure proper build configuration with `uv_build`
+
+## Security and Best Practices
+
+### Environment Security:
+- Never commit sensitive configuration values
+- Use environment variables for database credentials
+- Implement proper connection timeout handling
+- Validate all user inputs through Pydantic
