@@ -5,12 +5,12 @@ from mem_db_utils.config import DBConfig, DBType
 
 class MemDBConnector:
     __slots__ = ("uri", "db_type", "connection_type", "service")
-    service: str = None
-    connection_type: str = None
 
     def __init__(self, redis_type: str = None, master_service: str = None):
         self.uri = DBConfig.db_url
         self.db_type = DBConfig.db_type
+        self.service = None
+        self.connection_type = None
         if self.db_type == DBType.REDIS:
             self.connection_type = redis_type or DBConfig.redis_connection_type
             self.service = master_service or DBConfig.redis_master_service

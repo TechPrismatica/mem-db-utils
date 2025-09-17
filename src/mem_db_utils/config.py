@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import ValidationInfo, field_validator
+from pydantic import ConfigDict, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings
 from enum import StrEnum
 
@@ -17,6 +17,10 @@ class _DBConfig(BaseSettings):
     redis_connection_type: Optional[str] = None
     redis_master_service: Optional[str] = None
     db_timeout: Optional[int] = 30
+    
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
 
     @field_validator("db_type")
     def validate_db_type(
@@ -39,7 +43,8 @@ class _DBConfig(BaseSettings):
                     )
         return value
 
-
+# This should not be modified. The env variables are loaded from .env files or system environment.
+# No Lazy loading is used here to ensure the config is always available.
 DBConfig = _DBConfig()
 
 __all__ = ["DBType", "DBConfig"]
