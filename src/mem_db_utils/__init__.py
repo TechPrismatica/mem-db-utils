@@ -1,5 +1,7 @@
 from urllib.parse import urlparse
+
 import redis
+
 from mem_db_utils.config import DBConfig, DBType
 
 
@@ -25,9 +27,7 @@ class MemDBConnector:
         """
         if self.connection_type == "sentinel":
             return self._sentinel(db=db, **kwargs)
-        return redis.from_url(
-            url=self.uri, db=db, decode_responses=kwargs.get("decode_response", True)
-        )
+        return redis.from_url(url=self.uri, db=db, decode_responses=kwargs.get("decode_response", True))
 
     def _sentinel(self, db: int, **kwargs):
         """
@@ -50,8 +50,6 @@ class MemDBConnector:
         )
 
         # Connect to the Redis Sentinel master service and select the specified database
-        connection_object = sentinel.master_for(
-            self.service, decode_responses=kwargs.get("decode_response", True)
-        )
+        connection_object = sentinel.master_for(self.service, decode_responses=kwargs.get("decode_response", True))
         connection_object.select(db)
         return connection_object

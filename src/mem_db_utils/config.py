@@ -1,7 +1,8 @@
+from enum import StrEnum
 from typing import Optional
+
 from pydantic import ConfigDict, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings
-from enum import StrEnum
 
 
 class DBType(StrEnum):
@@ -17,15 +18,13 @@ class _DBConfig(BaseSettings):
     redis_connection_type: Optional[str] = None
     redis_master_service: Optional[str] = None
     db_timeout: Optional[int] = 30
-    
+
     model_config = ConfigDict(
         populate_by_name=True,
     )
 
     @field_validator("db_type")
-    def validate_db_type(
-        cls, value: Optional[DBType], info: ValidationInfo
-    ) -> Optional[DBType]:
+    def validate_db_type(cls, value: Optional[DBType], info: ValidationInfo) -> Optional[DBType]:
         if value is None:
             conn_protocol = info.data.get("db_url", "").split("://")[0]
             match conn_protocol:
@@ -38,10 +37,9 @@ class _DBConfig(BaseSettings):
                 case "valkey":
                     return DBType.VALKEY
                 case _:
-                    raise ValueError(
-                        f"Unsupported connection protocol: {conn_protocol}"
-                    )
+                    raise ValueError(f"Unsupported connection protocol: {conn_protocol}")
         return value
+
 
 # This should not be modified. The env variables are loaded from .env files or system environment.
 # No Lazy loading is used here to ensure the config is always available.

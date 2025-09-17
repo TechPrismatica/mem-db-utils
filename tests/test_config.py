@@ -1,8 +1,9 @@
 """Tests for the config module."""
 
 import os
-import pytest
 from unittest.mock import patch
+
+import pytest
 from pydantic import ValidationError
 
 from mem_db_utils.config import DBType, _DBConfig
@@ -30,10 +31,7 @@ class TestDBConfig:
 
     def test_config_with_explicit_db_type(self):
         """Test configuration with explicitly set db_type."""
-        with patch.dict(os.environ, {
-            "DB_URL": "redis://localhost:6379/0",
-            "DB_TYPE": "redis"
-        }):
+        with patch.dict(os.environ, {"DB_URL": "redis://localhost:6379/0", "DB_TYPE": "redis"}):
             config = _DBConfig()
             assert config.db_url == "redis://localhost:6379/0"
             assert config.db_type == DBType.REDIS
@@ -47,7 +45,7 @@ class TestDBConfig:
             ("dragonfly://localhost:6380", DBType.DRAGONFLY),
             ("valkey://localhost:6381", DBType.VALKEY),
         ]
-        
+
         for url, expected_type in test_cases:
             config = _DBConfig(db_url=url, db_type=None)
             assert config.db_type == expected_type
@@ -63,12 +61,15 @@ class TestDBConfig:
 
     def test_config_optional_settings(self):
         """Test optional configuration settings."""
-        with patch.dict(os.environ, {
-            "DB_URL": "redis://localhost:6379/0",
-            "REDIS_CONNECTION_TYPE": "sentinel",
-            "REDIS_MASTER_SERVICE": "mymaster",
-            "DB_TIMEOUT": "60"
-        }):
+        with patch.dict(
+            os.environ,
+            {
+                "DB_URL": "redis://localhost:6379/0",
+                "REDIS_CONNECTION_TYPE": "sentinel",
+                "REDIS_MASTER_SERVICE": "mymaster",
+                "DB_TIMEOUT": "60",
+            },
+        ):
             config = _DBConfig()
             assert config.redis_connection_type == "sentinel"
             assert config.redis_master_service == "mymaster"
@@ -93,9 +94,6 @@ class TestDBConfig:
 
     def test_config_override_auto_detection(self):
         """Test that explicit db_type overrides auto-detection."""
-        with patch.dict(os.environ, {
-            "DB_URL": "redis://localhost:6379/0",
-            "DB_TYPE": "valkey"
-        }):
+        with patch.dict(os.environ, {"DB_URL": "redis://localhost:6379/0", "DB_TYPE": "valkey"}):
             config = _DBConfig()
             assert config.db_type == DBType.VALKEY  # Overridden value
