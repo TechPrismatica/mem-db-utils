@@ -52,9 +52,11 @@ class TestAsyncMemDBConnector:
     async def test_connect_direct_connection(self, mock_from_url):
         """Test direct async database connection."""
         mock_connection = AsyncMock()
+
         # Mock from_url to return a coroutine
         async def mock_coro():
             return mock_connection
+
         mock_from_url.return_value = mock_coro()
 
         connector = AsyncMemDBConnector()
@@ -70,9 +72,11 @@ class TestAsyncMemDBConnector:
     async def test_connect_with_custom_kwargs(self, mock_from_url):
         """Test async connection with custom keyword arguments."""
         mock_connection = AsyncMock()
+
         # Mock from_url to return a coroutine
         async def mock_coro():
             return mock_connection
+
         mock_from_url.return_value = mock_coro()
 
         connector = AsyncMemDBConnector()
@@ -116,9 +120,11 @@ class TestAsyncMemDBConnector:
     async def test_connect_default_db(self, mock_from_url):
         """Test async connection with default database (0)."""
         mock_connection = AsyncMock()
+
         # Mock from_url to return a coroutine
         async def mock_coro():
             return mock_connection
+
         mock_from_url.return_value = mock_coro()
 
         connector = AsyncMemDBConnector()

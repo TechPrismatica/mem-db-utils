@@ -10,7 +10,7 @@ Always reference these instructions first and fallback to search or bash command
 - `pip install -e .` -- installs the package in development mode. NEVER CANCEL: Takes 10-60 seconds, may timeout due to network issues. Set timeout to 120+ seconds (extra margin for slow mirrors or network issues).
 - `pip install coverage pre-commit pytest pytest-cov pytest-dotenv ruff` -- installs development dependencies. NEVER CANCEL: Takes 30-120 seconds. Set timeout to 180+ seconds (extra margin for slow mirrors or network issues).
 - `python -m pytest tests/ -v` -- runs unit tests (takes ~0.4 seconds, 20 passed, 5 skipped without database)
-- `ruff check .` -- runs linting (takes ~0.01 seconds)  
+- `ruff check .` -- runs linting (takes ~0.01 seconds)
 - `ruff format --check .` -- checks code formatting (takes ~0.01 seconds)
 
 ### Environment Configuration:
