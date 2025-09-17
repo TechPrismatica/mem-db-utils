@@ -34,7 +34,7 @@ class TestAsyncMemDBConnectorIntegration:
 
                 # Cleanup
                 await conn.delete("test_async_key")
-                
+
                 # Close the connection
                 await conn.aclose()
             else:
@@ -164,7 +164,7 @@ class TestAsyncMemDBConnectorIntegration:
             # Test 3 concurrent connections
             tasks = [test_connection(i) for i in range(3)]
             results = await asyncio.gather(*tasks, return_exceptions=True)
-            
+
             # At least some connections should succeed
             success_count = sum(1 for r in results if r is True)
             assert success_count > 0

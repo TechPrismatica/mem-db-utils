@@ -1,7 +1,6 @@
 """Tests for AsyncMemDBConnector class."""
 
-import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 from urllib.parse import urlparse
 
 import pytest
@@ -159,7 +158,7 @@ class TestAsyncMemDBConnector:
         """Test error handling in async connect method."""
         with patch("redis.asyncio.from_url") as mock_from_url:
             mock_from_url.side_effect = Exception("Connection failed")
-            
+
             connector = AsyncMemDBConnector()
             if connector.connection_type != "sentinel":
                 with pytest.raises(Exception, match="Connection failed"):
@@ -170,7 +169,7 @@ class TestAsyncMemDBConnector:
         """Test error handling in async sentinel method."""
         with patch("redis.asyncio.Sentinel") as mock_sentinel_class:
             mock_sentinel_class.side_effect = Exception("Sentinel connection failed")
-            
+
             connector = AsyncMemDBConnector(redis_type="sentinel")
             if connector.db_type == DBType.REDIS:
                 with pytest.raises(Exception, match="Sentinel connection failed"):
