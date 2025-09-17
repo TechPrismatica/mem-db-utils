@@ -1,6 +1,6 @@
 [project]
 name = "mem-db-utils"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python package for in memory database to be used for cache, fast-access storages."
 readme = "README.md"
 requires-python = ">=3.12"
