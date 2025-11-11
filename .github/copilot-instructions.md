@@ -50,6 +50,32 @@ Always reference these instructions first and fallback to search or bash command
 - Verify configuration loading works with various environment variable combinations
 - Test error handling with invalid database URLs or unreachable servers
 
+### Async Testing Requirements:
+- Run async tests: `python -m pytest tests/test_async_connector.py tests/test_async_integration.py -v`
+- Async tests require `pytest-asyncio` dependency
+- Test async connection closing: `await conn.aclose()` must be called
+- Verify async operations work: `await conn.ping()`, `await conn.set()`, `await conn.get()`
+
+## Architecture and Design Principles
+
+### Package Structure:
+- **Sync API**: `src/mem_db_utils/__init__.py` - Main synchronous connector
+- **Async API**: `src/mem_db_utils/asyncio/__init__.py` - Asynchronous connector (mirrors sync API)
+- **Configuration**: `src/mem_db_utils/config.py` - Environment-based configuration using pydantic-settings
+- **Type Hints**: `src/mem_db_utils/py.typed` - Marks package as type-hinted
+
+### Design Principles:
+- **Dual API Design**: Maintain feature parity between sync and async APIs
+- **Memory Efficiency**: Use `__slots__` in connector classes to reduce memory footprint
+- **Environment-First Config**: Configuration loaded from environment variables or `.env` files
+- **Database Abstraction**: Support multiple database types through unified interface
+- **Lazy Connection**: Connections created on-demand via `connect()` method
+
+### Code Organization:
+- Keep sync and async implementations separate but parallel
+- Configuration validation happens at import time (not lazily)
+- Each database type may have different capabilities (e.g., Memcached doesn't support database selection)
+
 ## Common Tasks
 
 ### Repository Structure:
@@ -153,3 +179,77 @@ mem-db-utils/
 - Test connection manually: `docker exec -it test-redis redis-cli ping`
 - Verify port availability: `netstat -tlnp | grep 6379`
 - Check firewall settings if running on remote host
+
+## Code Style and Best Practices
+
+### Python Code Style:
+- **Line Length**: Maximum 120 characters (enforced by ruff)
+- **Formatting**: Use `ruff format .` to auto-format code
+- **Import Order**: Automated by ruff (isort rules)
+- **Type Hints**: Always include type hints for function parameters and return values
+- **Docstrings**: Use for public APIs and complex functions
+
+### Naming Conventions:
+- **Classes**: PascalCase (e.g., `MemDBConnector`)
+- **Functions/Methods**: snake_case (e.g., `connect`, `get_connection`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `DB_TIMEOUT`)
+- **Private Members**: Prefix with single underscore (e.g., `_internal_method`)
+- **Type Variables**: PascalCase with `T` prefix (e.g., `TConnection`)
+
+### Code Quality Guidelines:
+- **Complexity**: Keep functions simple; avoid complex nested logic (C901 ignored but still a guideline)
+- **Error Handling**: Use specific exception types, not bare `except:`
+- **Memory**: Prefer `__slots__` for classes with many instances
+- **Testing**: Write tests for new features; maintain >50% code coverage
+- **Linting**: All code must pass `ruff check .` before committing
+
+### Async/Await Patterns:
+- **Connection Management**: Always use `async with` or explicit `await conn.aclose()`
+- **Resource Cleanup**: Use try/finally blocks to ensure async resources are cleaned up
+- **Concurrency**: Use `asyncio.gather()` for concurrent operations
+- **Compatibility**: Async API should mirror sync API functionality
+- **Error Handling**: Wrap async operations in try/except with proper cleanup
+
+### Testing Best Practices:
+- **Unit Tests**: Mock external dependencies (databases) using pytest fixtures
+- **Integration Tests**: Use Docker containers for real database testing
+- **Async Tests**: Mark with `@pytest.mark.asyncio` decorator
+- **Coverage**: Aim for meaningful coverage, not just high percentages
+- **Fixtures**: Use `conftest.py` for shared test fixtures
+- **Environment**: Use `pytest-dotenv` for test environment variables
+
+## Contribution Workflow
+
+### Git Workflow:
+1. **Branch Naming**: Use descriptive branch names (e.g., `feature/add-dragonfly-support`, `fix/connection-timeout`)
+2. **Commits**: Write clear, concise commit messages explaining the "why"
+3. **Pre-commit Hooks**: Install with `pre-commit install` to run checks before commits
+4. **Pull Requests**: Include description of changes, testing done, and any breaking changes
+
+### Before Submitting PR:
+- [ ] Run full test suite: `python -m pytest tests/ -v`
+- [ ] Check linting: `ruff check . && ruff format --check .`
+- [ ] Verify type hints: Check that `py.typed` marker is preserved
+- [ ] Update documentation: README.md if adding new features
+- [ ] Test with multiple database types if applicable
+- [ ] Ensure async tests pass if touching async code
+
+### Review Process:
+- PRs should be focused and address a single concern
+- Include examples or test cases demonstrating the change
+- Be responsive to review comments
+- Keep PRs small for easier review
+
+## Future Considerations
+
+### Rust Port Planning:
+- This package may be ported to Rust in the future
+- Keep interfaces simple and well-documented
+- Avoid Python-specific patterns that would be hard to translate
+- Document any complex logic thoroughly
+
+### Extensibility:
+- New database types should follow existing patterns
+- Configuration should remain environment-variable based
+- Maintain backward compatibility when possible
+- Consider impact on both sync and async APIs when adding features
